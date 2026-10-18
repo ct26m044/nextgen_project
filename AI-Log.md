@@ -65,3 +65,17 @@ Verstanden: Gespeicherte Daten müssen überprüft werden. Außerdem ist die Rei
 Prompt: Sind meine beiden Dokumente vollständig und was muss ich noch korrigieren?  
 Übernommen: Kleinere technische Korrekturen, sprachliche Verbesserungen und Ergänzungen im Sequenzdiagramm.  
 Verstanden: Die beiden Konzepten müssen konsistent sein. Besonders wichtig ist, dass die Zuständigkeiten und Datenflüsse in Text und Diagrammen übereinstimmen.  
+
+## Aufgabe D
+Prompt: Für die Konferenz App haben wir uns auf Vue + Vite + vue-router als Projekt setup/Tooling entschieden. Hilf mir, ein ADR zu der Setup-/Tooling-Entscheidung in markdown zu schreiben (keine Rendering-Strategien), mit der folgenden Struktur: [Strukturbeschreibung].
+Übernommen: Das ADR.
+Verstanden: Vue Router ermöglicht eine strukturierte Navigation zwischen den verschiedenen Seiten der App; das Setup passt zum aktuellen Umfang der Anwendung. Nuxt bietet eine integrierte Projektstruktur, dateibasiertes Routing und zusätzliche Funktionen für größere Anwendungen
+
+## Aufgabe E
+Prompt: Bind the design tokens from #attachment:tokens.json to the project as css properties in attachment:style.css.
+Übernommen: CSS Variablen in style.css abgeleitet von den Design Tokens aus tokens.json.
+Verstanden: Wie sich Design-Tokens im JSON-Format in CSS-Variablen umwandeln lassen.
+
+Prompt: Remove unnecessary template variables and styles from #attachment:style.css and use the new variables based on the design tokens instead.
+Übernommen: Neue style.css Struktur.
+Verstanden: Welche Template Variablen und Styles unnötig waren; wie unsere Design Tokens auf spezifische Elemente angewendet werden können.
