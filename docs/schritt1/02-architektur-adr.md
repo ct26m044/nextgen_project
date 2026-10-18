@@ -1,7 +1,12 @@
 # ADR 02: Komponenten- und Ordnerstruktur
 
-Setup: Vue 3 + Vite + vue-router + TypeScript
-
+## Status
+Akzeptiert  
+  
+## Datum  
+2016-10-17  
+Setup: Vue 3 + Vite + vue-router + TypeScript  
+  
 ## 1. Kontext
 
 PixelFlow zeigt die Konferenz "FrontendNow" mit mehreren Seitentypen: Programmübersicht, Session-Detail, Speaker-Übersicht, Speaker-Detail und "Mein Programm". Die Daten sind über IDs verknüpft. In den Schritten 2 bis 4 kommen Features dazu. Das heißt die Struktur muss wachsen können.
