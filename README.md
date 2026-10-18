@@ -1,5 +1,5 @@
-# Vue 3 + TypeScript + Vite
-
+# Frontend Projekt von David Tosa und Armin Zukorlic  
+  
 ## Anleitung  
 
 Voraussetzung: Node.js und npm  
