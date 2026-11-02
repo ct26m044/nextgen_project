@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import conferenceData from '../data/conference-data.json'
+import { useConferenceData } from '../composables/useConferenceData'
 
-const sessionCount = conferenceData.sessions.length
+const { sessions } = useConferenceData()
+const sessionCount = sessions.length
 </script>
 
 <template>
