@@ -14,8 +14,17 @@ const router = createRouter({
       path: '/program',
       name: 'program',
       component: ProgramView
+    },
+    {
+      path: '/sessions/:id',
+      name: 'session-detail',
+      component: () => import('../views/SessionDetailView.vue'),
+      props: true
     }
-  ]
+  ],
+  scrollBehavior() {
+    return { top: 0 }
+  }
 })
 
 export default router

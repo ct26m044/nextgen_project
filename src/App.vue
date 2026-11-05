@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import conferenceData from './data/conference-data.json'
-
-const sessionCount = conferenceData.sessions.length
 </script>
 
 <template>

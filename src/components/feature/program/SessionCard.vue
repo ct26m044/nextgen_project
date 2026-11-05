@@ -11,7 +11,11 @@ const { getTrack, getRoom } = useConferenceData()
 
 <template>
   <article class="session-card">
-    <h2>{{ session.title }}</h2>
+    <h2>
+      <RouterLink :to="{ name: 'session-detail', params: { id: session.id } }">
+        {{ session.title }}
+      </RouterLink>
+    </h2>
 
     <p>
       {{ session.day }} |
