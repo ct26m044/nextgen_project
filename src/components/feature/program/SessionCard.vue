@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { useConferenceData } from '../../../composables/useConferenceData'
+import type { Session } from '../../../types/conference'
 
 defineProps<{
-  session: {
-    id: string
-    title: string
-    day: string
-    startTime: string
-    endTime: string
-    trackId: string
-    roomId: string
-    level: string
-  }
+  session: Session
 }>()
 
 const { getTrack, getRoom } = useConferenceData()

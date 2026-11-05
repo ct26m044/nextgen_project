@@ -1,16 +1,6 @@
 import { ref, computed, toValue } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
-
-type Session = {
-  id: string
-  title: string
-  trackId: string
-  roomId: string
-  day: string
-  startTime: string
-  endTime: string
-  level: string
-}
+import type { Session } from '../types/conference'
 
 export function useSessionFilter(sessions: MaybeRefOrGetter<Session[]>) {
   const selectedLevel = ref('')
