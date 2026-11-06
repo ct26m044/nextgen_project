@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProgramView from '../views/ProgramView.vue'
+import SpeakerDetailView from '../views/SpeakerDetailView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +21,11 @@ const router = createRouter({
       name: 'session-detail',
       component: () => import('../views/SessionDetailView.vue'),
       props: true
+    },
+    {
+      path: '/speakers/:id',
+      name: 'speaker-detail',
+      component: SpeakerDetailView
     }
   ],
   scrollBehavior() {

@@ -33,8 +33,9 @@ const formatDay = (iso: string) => dateFormatter.format(new Date(iso))
       <h2>{{ session.speakers.length > 1 ? 'Speaker' : 'Speaker:in' }}</h2>
       <ul class="speakers">
         <li v-for="speaker in session.speakers" :key="speaker.id">
-          <!-- RouterLink for speaker detail view -->
-          {{ speaker.name }}
+          <RouterLink :to="'/speakers/' + speaker.id">
+            {{ speaker.name }}
+          </RouterLink>
           <span>{{ speaker.title }}, {{ speaker.company }}</span>
         </li>
       </ul>
