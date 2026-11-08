@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SessionDetails } from '../../../types/conference'
+import MyProgramButton from '../my-program/MyProgramButton.vue'
 
 defineProps<{ session: SessionDetails }>()
 
@@ -41,7 +42,7 @@ const formatDay = (iso: string) => dateFormatter.format(new Date(iso))
       </ul>
     </section>
 
-    <!-- later: <MyProgramButton :session-id="session.id" /> -->
+    <MyProgramButton :session-id="session.id" />
   </article>
 </template>
 

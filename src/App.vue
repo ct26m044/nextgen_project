@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MyProgramCounter from './components/feature/my-program/MyProgramCounter.vue'
 </script>
 
 <template>
@@ -8,6 +9,7 @@
       <nav>
         <RouterLink to="/">Startseite</RouterLink>
         <RouterLink to="/program">Programm</RouterLink>
+        <MyProgramCounter />
       </nav>
     </header>
 

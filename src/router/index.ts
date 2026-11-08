@@ -26,6 +26,11 @@ const router = createRouter({
       path: '/speakers/:id',
       name: 'speaker-detail',
       component: SpeakerDetailView
+    },
+    {
+      path: '/my-program',
+      name: 'my-program',
+      component: () => import('../views/MyProgramView.vue')
     }
   ],
   scrollBehavior() {
