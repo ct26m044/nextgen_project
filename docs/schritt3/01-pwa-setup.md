@@ -1,0 +1,5 @@
+PWA Setup  
+  
+Für die PWA Implementierung wurde vite-plugin-pwa mit Workbox in das Projekt integriert. Das Plugin erzeugt beim Build den Service Worker und das Web App Manifest. Das Manifest enthält den Namen, sowie die Start-URL, den Darstellungsmodus standalone und zwei PNG Icons. Eines in 192x192 und eines in 512x512, welche in Figma erstellt wurden und schlicht gehalten sind. Die Themenfarbe #101c2c und die Hintergrundfarbe #f9fafb wurden aus den bestehenden Design Tokens übernommen.  
+Workbox verwendet außerdem Precaching für die statischen Build Dateien der Anwendung und der Service Worker wird automatisch registriert und kann bei neuen Builds aktualisiert werden.  
+Die Implementierung habe ich mit npm run build überprüft und auch mit Chrome DevTools habe ich einen aktiven Service Worker geprüft. Die Speaker Profilseite /speakers/sp01 konnte ich auch nach einem vorherigen Onlinebesuch auch im Offline Modus aufrufen.
