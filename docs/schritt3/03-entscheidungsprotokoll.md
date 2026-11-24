@@ -41,11 +41,11 @@ Testumgebung: Produktions-Build (`npm run build` + `npm run preview`, http://loc
 
 | | Person 1 | Person 2 |
 |---|---|---|
-| Name | TODO | David |
-| Betriebssystem | TODO | Windows 11 |
-| Browser + Version | TODO | Firefox 161.0 (64-bit) |
-| Offline-Simulation | TODO | DevTools-Throttling „Offline" und/oder Preview-Server gestoppt |
-| Commit | TODO | `9dc2344` |
+| Name | Armin | David |
+| Betriebssystem | Windows 11 | Windows 11 |
+| Browser + Version | Google Chrome | Firefox 161.0 (64-bit) |
+| Offline-Simulation | Chrome DevTools -> Application -> Service Workers -> Offline; bei Szenario iii Network -> Offline | DevTools-Throttling „Offline" und/oder Preview-Server gestoppt |
+| Commit | `8e52005` | `9dc2344` |
 
 ### Szenario i: Session-Übersicht offline nach vorherigem Onlinebesuch
 #### Durchlauf 1 – Person 2 (Firefox 161, Commit `9dc2344`)
@@ -59,14 +59,25 @@ Testumgebung: Produktions-Build (`npm run build` + `npm run preview`, http://loc
 
 Nachweis: ![Szenario i, Durchlauf 1 – Cache Storage nur mit Precache](assets/szenario-1-cache-storage.png) ![Szenario i, Durchlauf 1 – Fehlermeldung offline](assets/szenario-1-network-offline.png)
 
-#### Durchlauf 2 – TODO
-**Ausgangslage:** TODO
+#### Durchlauf 2 – Person 1 (Google Chrome, Windows)
+**Ausgangslage:** Vor dem Test wurden sämtliche Website-Daten von localhost:4173 gelöscht, einschließlich des Service Workers und aller Cache-Einträge. Anschließend habe ich PixelFlow genau einmal online geöffnet. Unter Application -> Cache Storage war danach ausschließlich der Workbox-Precache vorhanden. Die Runtime-Caches für Sessions, Speaker und Konferenz-Metadaten fehlten.
 
-**Aktion:** TODO
+**Aktion:** In Chrome DevTools unter Application -> Service Workers den Offline-Modus aktiviert und die Programmübersicht unter /program erneut geladen.
 
-**Beobachtetes Verhalten:** TODO
+**Beobachtetes Verhalten:** Die App-Shell wurde weiterhin aus dem Precache geladen. Allerdings konnte die Session-Übersicht nicht angezeigt werden und stattdessen erschien die Fehlermeldung „Das Programm konnte nicht geladen werden. Bitte die Seite einmal mit Internetverbindung öffnen.“
 
-**Ergebnis:** TODO
+**Ergebnis:** Nicht bestanden. Damit wurde die bereits in Firefox festgestellte Einschränkung auch in Chrome wiederholt. Ein einmaliger Online-Besuch reicht derzeit nicht zuverlässig aus, um die benötigten Konferenzdaten offline verfügbar zu machen.
+
+Nachweis: ![Szenario i – Fehlermeldung offline](assets/szenario-1-offline-fehlermeldung.png)
+
+#### Durchlauf 3 – Person 1 (Google Chrome, Windows)
+**Ausgangslage:** Die Anwendung habe ich mehrfach mit aktiver Netzwerkverbindung geöffnet. Anschließend habe ich unter Application -> Cache Storage überprüft, ob der Workbox-Precache und die drei Runtime-Caches pixelflow-sessions, pixelflow-speakers und pixelflow-conference vorhanden waren.
+
+**Aktion:** Der Offline-Modus wurde von mir in Chrome DevTools aktiviert und die Programmübersicht unter /program erneut geöffnet.
+
+**Beobachtetes Verhalten:** Die Anwendung konnte vollständig geladen werden. Alle 20 Sessions wurden angezeigt und die Filter nach Track, Konferenztag und Level funktionierten weiterhin ohne Netzwerkverbindung.
+
+**Ergebnis:** Bestanden. Sobald die Runtime-Caches befüllt sind, funktioniert die Offline-Nutzung wie vorgesehen. Der Vergleich zeigt, dass nicht allein das Vorhandensein eines Service Workers entscheidend ist, sondern auch ob die benötigten Konferenzdaten bereits gespeichert wurden.
 
 ### Szenario ii: „Mein Programm" offline nach dem Hinzufügen von Sessions
 **Ausgangslage:** Online wurden drei Sessions über den Button zu „Mein Programm" hinzugefügt. In Application → Local Storage ist der Schlüssel `pixelflow:my-program:v1` mit den IDs sichtbar.
@@ -77,7 +88,17 @@ Nachweis: ![Szenario i, Durchlauf 1 – Cache Storage nur mit Precache](assets/s
 
 **Ergebnis:** TODO
 
-Nachweis: ![Szenario ii – Mein Programm offline](screenshots/szenario-2-my-program-offline.png) ![Szenario ii – Local Storage](screenshots/szenario-2-local-storage.png)
+#### Durchlauf 1 – Person 1 (Google Chrome, Windows)
+**Ausgangslage:** Zunächst habe ich die Platform online geöffnet und drei Sessions zum persönlichen Programm hinzugefügt. Die Auswahl wurde über localStorage gespeichert. Die benötigten Konferenzdaten und statischen Dateien waren bereits im Cache vorhanden.
+
+**Aktion:** Danach habe ich in Chrome DevTools den Offline-Modus aktiviert und die Seite „Mein Programm“ unter /my-program erneut geladen. Während des Offline-Modus habe ich eine der drei gespeicherten Sessions entfernt. Danach wurde die Seite nochmals neu geladen.
+
+**Beobachtetes Verhalten:** Das persönliche Programm konnte trotz fehlender Internetverbindung vollständig angezeigt werden. Nach dem Entfernen einer Session waren nur noch zwei Sessions gespeichert. Auch nach dem erneuten Laden blieb diese Änderung erhalten. Die Sessioninformationen einschließlich Titel, Track, Raum und Level wurden weiterhin korrekt angezeigt.
+
+**Ergebnis:** Bestanden. Die Speicherung über localStorage funktioniert auch ohne Internetverbindung. Gemeinsam mit dem App-Shell-Precaching und den Cache-First-Regeln für Konferenzdaten bleibt das persönliche Programm offline nutzbar. Eine Synchronisierung zwischen unterschiedlichen Browsern oder Geräten findet allerdings nicht statt.
+
+Nachweis: ![Szenario ii – Mein Programm offline](assets/szenario-2-my-program-offline.png) ![Szenario ii – Local Storage](assets/szenario-2-local-storage.png)
+Nachweis: ![Szenario ii – Mein Programm mit zwei Sessions im Offline-Modus](assets/szenario-2-chrome-offline.png)
 
 ### Szenario iii: Erstbesuch im Offline-Zustand (bewusster Grenzfall)
 **Ausgangslage:** Neues Inkognito-Fenster bzw. Site-Daten gelöscht, kein Service Worker registriert, Cache Storage leer.
@@ -88,7 +109,22 @@ Nachweis: ![Szenario ii – Mein Programm offline](screenshots/szenario-2-my-pro
 
 **Ergebnis und Bewertung:** TODO. Warum ist dieses Verhalten akzeptabel? (Ein Service Worker kann erst nach dem ersten Laden installiert werden, und Besucher öffnen die App typischerweise vor der Konferenz, z. B. über den Link in der Anmeldebestätigung. Was wäre eine mögliche Verbesserung?)
 
-Nachweis: ![Szenario iii – Erstbesuch offline](screenshots/szenario-3-erstbesuch-offline.png)
+#### Durchlauf 1 – Person 1 (Google Chrome, Windows)
+**Ausgangslage:** Für diesen Test habe ich alle bisherigen Inkognito-Fenster geschlossen. Danach habe ich ein neues Inkognito-Fenster in Google Chrome geöffnet. PixelFlow war in diesem Browser-Kontext noch nicht besucht worden. Somit waren weder ein registrierter Service Worker noch gespeicherte PWA-Dateien vorhanden.
+
+**Aktion:** Vor dem ersten Aufruf habe ich in Chrome DevTools unter Network den Offline-Modus aktiviert. Erst danach wurde http://localhost:4173/ in der Adresszeile aufgerufen.
+
+**Beobachtetes Verhalten:** PixelFlow konnte nicht geladen werden. Stattdessen erschien die Chrome-Fehlerseite mit dem Fehlercode ERR_INTERNET_DISCONNECTED. Im Network-Tab war die fehlgeschlagene Anfrage an localhost sichtbar.
+
+**Ergebnis und Bewertung:** Das Verhalten entspricht der dokumentierten Einschränkung des PWA-Prototyps. Ohne vorherigen Online-Besuch kann kein Service Worker installiert werden und es stehen keine gecachten Dateien zur Verfügung. Der Offline-Erstbesuch wird deshalb nicht unterstützt. Eine mögliche Verbesserung wäre, Benutzer bereits vor der Konferenz ausdrücklich auf den notwendigen ersten Online-Aufruf hinzuweisen.
+
+Nachweis: ![Szenario iii – Erstbesuch offline](assets/szenario-3-erstbesuch-offline.png)
 
 ## Zusammenführung der Testergebnisse
-TODO: Unterschiede zwischen beiden Rechnern, gefundene Lücken und daraus abgeleitete Änderungen (mit Commit-Hash).
+Bei Szenario i konnten wir beide unabhängig voneinander dieselbe Einschränkung feststellen. Sowohl in Google Chrome als auch in Mozilla Firefox wurde nach genau einem Online-Besuch lediglich die App-Shell offline geladen. Die Konferenzdaten standen hingegen nicht zur Verfügung, da die Runtime-Caches noch nicht befüllt waren.  
+  
+Bei einem weiteren Test in Chrome mit bereits gefüllten Runtime-Caches funktionierte die Session-Übersicht vollständig offline. Alle 20 Sessions waren sichtbar und die Filter konnten weiterhin verwendet werden.  
+Das zeigt, dass die Offline-Funktionalität von der vorherigen Befüllung der Runtime-Caches abhängt und der Fehler nicht auf einen einzelnen Browser beschränkt ist.  
+Die ursprüngliche Annahme, dass ein einmaliger Online-Besuch für die vollständige Offline-Nutzung ausreicht, konnte somit von uns nicht bestätigt werden.  
+  
+Eine Verbesserung wäre, die Konferenzdaten bereits während der Service-Worker-Installation zu speichern oder nach der Aktivierung gezielt erneut anzufordern.
