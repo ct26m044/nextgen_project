@@ -1,4 +1,3 @@
-import conferenceData from '../data/conference-data.json'
 import type {
   Conference,
   Room,
@@ -8,17 +7,42 @@ import type {
   Track
 } from '../types/conference'
 
-const conference: Conference = conferenceData.conference
-const tracks: Track[] = conferenceData.tracks
-const rooms: Room[] = conferenceData.rooms
-const speakers: Speaker[] = conferenceData.speakers
-// JSON infers level/format as plain `string`, so cast once at the boundary
-const sessions = conferenceData.sessions as Session[]
+let conference: Conference
+let tracks: Track[] = []
+let rooms: Room[] = []
+let speakers: Speaker[] = []
+let sessions: Session[] = []
 
-const sessionsById = new Map<string, Session>(sessions.map(s => [s.id, s]))
-const speakersById = new Map<string, Speaker>(speakers.map(s => [s.id, s]))
-const tracksById = new Map<string, Track>(tracks.map(t => [t.id, t]))
-const roomsById = new Map<string, Room>(rooms.map(r => [r.id, r]))
+let sessionsById = new Map<string, Session>()
+let speakersById = new Map<string, Speaker>()
+let tracksById = new Map<string, Track>()
+let roomsById = new Map<string, Room>()
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`${url}: ${res.status}`)
+  return res.json() as Promise<T>
+}
+
+/** Called once before mount. The requests go through the SW (Cache First). */
+export async function loadConferenceData(): Promise<void> {
+  const [meta, sessionData, speakerData] = await Promise.all([
+    fetchJson<{ conference: Conference; tracks: Track[]; rooms: Room[] }>('/api/conference.json'),
+    fetchJson<Session[]>('/api/sessions.json'),
+    fetchJson<Speaker[]>('/api/speakers.json')
+  ])
+
+  conference = meta.conference
+  tracks = meta.tracks
+  rooms = meta.rooms
+  sessions = sessionData
+  speakers = speakerData
+
+  sessionsById = new Map(sessions.map(s => [s.id, s]))
+  speakersById = new Map(speakers.map(s => [s.id, s]))
+  tracksById = new Map(tracks.map(t => [t.id, t]))
+  roomsById = new Map(rooms.map(r => [r.id, r]))
+}
 
 export function useConferenceData() {
   function getSession(id: string): Session | undefined {

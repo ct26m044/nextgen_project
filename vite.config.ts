@@ -7,6 +7,8 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Icons are already precached via globPatterns (png), avoid duplicates
+      includeManifestIcons: false,
 
       manifest: {
         name: 'FrontendNow – PixelFlow',
@@ -33,9 +35,58 @@ export default defineConfig({
       },
 
       workbox: {
+        // ── RULE A: App shell → Precaching ───────────────────────────────
+        // Concept: "Statische Assets und App-Shell". Build files are
+        // precached and replaced when a new SW version is installed.
+        // json is deliberately NOT listed, so the conference data goes
+        // through the runtime rules below.
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         navigateFallback: '/index.html',
-        cleanupOutdatedCaches: true
+        navigateFallbackDenylist: [/^\/api\//], // data URLs never get index.html
+        cleanupOutdatedCaches: true,
+
+        // ── Personal program → no SW rule ────────────────────────────────
+        // Concept: "Persönliches Programm". Stored in localStorage
+        // (useMyProgram.ts), so no network request is involved. Offline it
+        // only needs the app shell from RULE A.
+
+        runtimeCaching: [
+          // ── RULE B: Sessions → Cache First ─────────────────────────────
+          // Concept: "Sessions und Speaker Daten". The program hardly
+          // changes after it is published: serve from cache, go to the
+          // network only if nothing is cached yet.
+          {
+            urlPattern: /\/api\/sessions\.json$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pixelflow-sessions',
+              cacheableResponse: { statuses: [200] } // never cache error responses
+            }
+          },
+
+          // ── RULE C: Speakers → Cache First ─────────────────────────────
+          // Same decision as RULE B: speaker profiles are effectively static.
+          {
+            urlPattern: /\/api\/speakers\.json$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pixelflow-speakers',
+              cacheableResponse: { statuses: [200] }
+            }
+          },
+
+          // ── RULE D: Conference metadata (tracks, rooms) → Cache First ──
+          // Part of the program, so it follows the same decision. Without
+          // it, rooms and tracks would be missing from the offline views.
+          {
+            urlPattern: /\/api\/conference\.json$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pixelflow-conference',
+              cacheableResponse: { statuses: [200] }
+            }
+          }
+        ]
       }
     })
   ]

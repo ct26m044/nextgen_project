@@ -1,0 +1,187 @@
+[
+  {
+    "id": "sp01",
+    "name": "Mara Lindqvist",
+    "title": "CTO",
+    "company": "Nova Systems",
+    "bio": "Verantwortet die Frontend-Plattform bei Nova Systems und spricht regelmäßig über Architekturentscheidungen in großen Teams.",
+    "sessionIds": [
+      "s01",
+      "s20"
+    ]
+  },
+  {
+    "id": "sp02",
+    "name": "Jonas Ahrend",
+    "title": "Senior Frontend Architect",
+    "company": "Pixelwerk",
+    "bio": "Baut seit zehn Jahren Komponentenbibliotheken und ist überzeugter Verfechter von Headless-Patterns.",
+    "sessionIds": [
+      "s02"
+    ]
+  },
+  {
+    "id": "sp03",
+    "name": "Elena Voss",
+    "title": "Design Systems Lead",
+    "company": "Studio Hallo",
+    "bio": "Verbindet Design und Code über Design-Tokens-Pipelines für Agentur-Kunden.",
+    "sessionIds": [
+      "s03"
+    ]
+  },
+  {
+    "id": "sp04",
+    "name": "Tomas Krüger",
+    "title": "Freelance Consultant",
+    "company": "selbstständig",
+    "bio": "Berät Firmen bei Rendering-Strategie-Entscheidungen und Migrationen.",
+    "sessionIds": [
+      "s04"
+    ]
+  },
+  {
+    "id": "sp05",
+    "name": "Priya Nandakumar",
+    "title": "AI Tooling Engineer",
+    "company": "CloudNine Labs",
+    "bio": "Entwickelt interne AI-Coding-Assistenten und beschäftigt sich mit deren Qualitätssicherung.",
+    "sessionIds": [
+      "s05",
+      "s20"
+    ]
+  },
+  {
+    "id": "sp06",
+    "name": "Felix Brandt",
+    "title": "Staff Engineer",
+    "company": "Nova Systems",
+    "bio": "Fokus auf State-Management-Architekturen in großen Vue- und React-Codebasen.",
+    "sessionIds": [
+      "s06"
+    ]
+  },
+  {
+    "id": "sp07",
+    "name": "Sara Lindholm",
+    "title": "PWA Specialist",
+    "company": "offline-first.dev",
+    "bio": "Schreibt und spricht über Offline-First-Architekturen und Service Worker.",
+    "sessionIds": [
+      "s07",
+      "s17"
+    ]
+  },
+  {
+    "id": "sp08",
+    "name": "Daniel Osei",
+    "title": "Prompt Engineering Coach",
+    "company": "selbstständig",
+    "bio": "Trainiert Entwicklungsteams im effektiven Einsatz von AI-Coding-Assistenten.",
+    "sessionIds": [
+      "s08"
+    ]
+  },
+  {
+    "id": "sp09",
+    "name": "Nina Falkenberg",
+    "title": "UX Engineer",
+    "company": "Studio Hallo",
+    "bio": "Gestaltet und implementiert Theme-Systeme für Enterprise-Kunden.",
+    "sessionIds": [
+      "s09"
+    ]
+  },
+  {
+    "id": "sp10",
+    "name": "Louis Meyer",
+    "title": "Performance Engineer",
+    "company": "CloudNine Labs",
+    "bio": "Misst und optimiert Ladezeiten großer Content-Websites.",
+    "sessionIds": [
+      "s10"
+    ]
+  },
+  {
+    "id": "sp11",
+    "name": "Amara Diallo",
+    "title": "Head of Engineering",
+    "company": "Vela Digital",
+    "bio": "Führt ein 40-köpfiges Frontend-Team und etabliert dort verantwortungsvolle AI-Workflows.",
+    "sessionIds": [
+      "s11",
+      "s20"
+    ]
+  },
+  {
+    "id": "sp12",
+    "name": "Kenji Watanabe",
+    "title": "Open-Source Maintainer",
+    "company": "selbstständig",
+    "bio": "Pflegt mehrere populäre Vue-Composable-Bibliotheken.",
+    "sessionIds": [
+      "s12"
+    ]
+  },
+  {
+    "id": "sp13",
+    "name": "Isabel Roth",
+    "title": "Design Ops Lead",
+    "company": "Studio Hallo",
+    "bio": "Baut die Brücke zwischen Figma und Produktionscode für mehrere Design-Teams.",
+    "sessionIds": [
+      "s13"
+    ]
+  },
+  {
+    "id": "sp14",
+    "name": "Peter Lindgren",
+    "title": "Platform Engineer",
+    "company": "Nova Systems",
+    "bio": "Betreibt die Build- und Deployment-Pipeline für mehrere Content-Plattformen.",
+    "sessionIds": [
+      "s14"
+    ]
+  },
+  {
+    "id": "sp15",
+    "name": "Julia Baumgartner",
+    "title": "Developer Experience Lead",
+    "company": "Vela Digital",
+    "bio": "Verantwortet Linter- und CI-Standards für alle Frontend-Repositories.",
+    "sessionIds": [
+      "s15"
+    ]
+  },
+  {
+    "id": "sp16",
+    "name": "Robin Achterberg",
+    "title": "Accessibility Consultant",
+    "company": "selbstständig",
+    "bio": "Prüft und schult Teams zu barrierefreien Web-Oberflächen.",
+    "sessionIds": [
+      "s16"
+    ]
+  },
+  {
+    "id": "sp17",
+    "name": "Hana Kovac",
+    "title": "Engineering Manager",
+    "company": "CloudNine Labs",
+    "bio": "Nutzt DORA-Metriken zur Steuerung mehrerer Frontend-Teams.",
+    "sessionIds": [
+      "s18"
+    ]
+  },
+  {
+    "id": "sp18",
+    "name": "Malik Osei",
+    "title": "Principal Engineer",
+    "company": "Pixelwerk",
+    "bio": "Verantwortet die Ordner- und Modulstruktur mehrerer Millionen-Zeilen-Frontends.",
+    "sessionIds": [
+      "s19",
+      "s20"
+    ]
+  }
+]
