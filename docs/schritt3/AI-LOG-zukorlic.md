@@ -77,7 +77,7 @@ Zweck: Herausfinden, warum die Anwendung nach nur einem Online-Besuch offline ni
 Übernommen: Den Fehler anhand der Cache-Einträge und der Fehlermeldung untersucht und als eigenen Testdurchlauf dokumentiert.  
 Verstanden: Die App-Shell war bereits gespeichert, aber die Runtime-Caches für die Konferenzdaten waren noch leer. Der Service Worker hatte die JSON-Anfragen beim ersten Laden noch nicht abgefangen und deswegen ging es nicht.  
   
-## Persönliches Programm nochmals offline testen
+## Persönliches Programm nochmals offline testen  
 Datum: 24.11.2026  
 Prompt: „Soll ich test 2 nochmal wiederholen?“  
 Zweck: Überprüfen, ob Mein Programm auch offline verändert werden kann.  
