@@ -30,6 +30,14 @@ export default defineConfig({
             src: '/icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png'
+          },
+          // Same file: background is full-bleed and "PF" lies inside the
+          // maskable safe zone (central circle, 80 % diameter).
+          {
+            src: '/icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
