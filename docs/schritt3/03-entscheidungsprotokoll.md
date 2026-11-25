@@ -32,7 +32,7 @@ Cache First statt Stale While Revalidate, weil das Programm nach der Veröffentl
 - Negativ: Kurzfristige Änderungen an Sessions erreichen Besucher nicht, solange ihr Cache existiert (kein Ablaufdatum gesetzt).
 - Negativ: Ohne vorherigen Onlinebesuch gibt es keinen Offline-Betrieb (Szenario iii).
 - Negativ: „Mein Programm" ist an Browser und Gerät gebunden.
-- Negativ (durch Szenario i aufgedeckt): Die Runtime-Caches werden erst ab dem zweiten Laden befüllt, weil der Service Worker beim ersten Besuch noch nicht aktiv ist, wenn die Daten geladen werden. Wer die App vor der Konferenz nur einmal öffnet, sieht offline nur eine Fehlermeldung.
+- Negativ (durch Szenario i aufgedeckt): Die Runtime-Caches werden erst ab dem zweiten Laden befüllt, weil der Service Worker beim ersten Besuch noch nicht aktiv ist, wenn die Daten geladen werden. Wer die App vor der Konferenz nur einmal öffnet, sieht offline nur eine Fehlermeldung. Behoben in Commit `b82bcd5`: `main.ts` fordert die Daten nach der Aktivierung des Service Workers erneut an (siehe Szenario i, Durchlauf 4).
 - TODO nach den Tests ergänzen: welche weiteren Konsequenzen haben sich gezeigt?
 
 ## Testszenarien
@@ -45,7 +45,7 @@ Testumgebung: Produktions-Build (`npm run build` + `npm run preview`, http://loc
 | Betriebssystem | Windows 11 | Windows 11 |
 | Browser + Version | Google Chrome | Firefox 161.0 (64-bit) |
 | Offline-Simulation | Chrome DevTools -> Application -> Service Workers -> Offline; bei Szenario iii Network -> Offline | DevTools-Throttling „Offline" und/oder Preview-Server gestoppt |
-| Commit | `8e52005` | `9dc2344` |
+| Commit | `8e52005` | `9dc2344` (Durchlauf 1), `b82bcd5` (Durchlauf 4) |
 
 ### Szenario i: Session-Übersicht offline nach vorherigem Onlinebesuch
 #### Durchlauf 1 – Person 2 (Firefox 161, Commit `9dc2344`)
@@ -78,6 +78,17 @@ Nachweis: ![Szenario i – Fehlermeldung offline](assets/szenario-1-offline-fehl
 **Beobachtetes Verhalten:** Die Anwendung konnte vollständig geladen werden. Alle 20 Sessions wurden angezeigt und die Filter nach Track, Konferenztag und Level funktionierten weiterhin ohne Netzwerkverbindung.
 
 **Ergebnis:** Bestanden. Sobald die Runtime-Caches befüllt sind, funktioniert die Offline-Nutzung wie vorgesehen. Der Vergleich zeigt, dass nicht allein das Vorhandensein eines Service Workers entscheidend ist, sondern auch ob die benötigten Konferenzdaten bereits gespeichert wurden.
+
+#### Durchlauf 4 – Person 2 (Firefox 161, Commit `b82bcd5`, nach dem Fix)
+**Ausgangslage:** Als Reaktion auf Durchlauf 1 und 2 fordert `main.ts` die drei JSON-Dateien beim ersten Besuch erneut an, sobald der Service Worker die Seite kontrolliert. Diese Requests laufen über die Cache-First-Regeln B–D. Wie in Durchlauf 1 wurden alle Website-Daten gelöscht, der Service Worker abgemeldet und die Seite in einem neuen Tab genau einmal online geladen. Danach zeigte Cache Storage neben `workbox-precache-v2-…` auch `pixelflow-conference`, `pixelflow-sessions` und `pixelflow-speakers`.
+
+**Aktion:** Innerhalb der App zu `/program` navigiert, Preview-Server mit Strg+C gestoppt, Seite neu geladen (Strg+R).
+
+**Beobachtetes Verhalten:** Die Programmübersicht wurde mit allen 20 Sessions angezeigt. Im Netzwerk-Tab zeigten alle 8 Requests (Dokument, JS, CSS, `conference.json`, `sessions.json`, `speakers.json`, Icon) in der Spalte „Übertragen" den Wert „service worker.
+
+**Ergebnis:** Bestanden. Ein einmaliger Onlinebesuch reicht nach dem Fix aus, so wie im Konzept vorgesehen. Die Strategie Cache First blieb unverändert, nur die erstmalige Befüllung der Runtime-Caches wurde korrigiert.
+
+Nachweis: ![Szenario i, Durchlauf 4 – alle Runtime-Caches nach einem Besuch](assets/szenario-1-cache-storage-1.png) ![Szenario i, Durchlauf 4 – Antworten aus dem Service Worker](assets/szenario-1-service-worker-transferred.png)
 
 ### Szenario ii: „Mein Programm" offline nach dem Hinzufügen von Sessions
 **Ausgangslage:** Online wurden drei Sessions über den Button zu „Mein Programm" hinzugefügt. In Application → Local Storage ist der Schlüssel `pixelflow:my-program:v1` mit den IDs sichtbar.
@@ -127,4 +138,4 @@ Bei einem weiteren Test in Chrome mit bereits gefüllten Runtime-Caches funktion
 Das zeigt, dass die Offline-Funktionalität von der vorherigen Befüllung der Runtime-Caches abhängt und der Fehler nicht auf einen einzelnen Browser beschränkt ist.  
 Die ursprüngliche Annahme, dass ein einmaliger Online-Besuch für die vollständige Offline-Nutzung ausreicht, konnte somit von uns nicht bestätigt werden.  
   
-Eine Verbesserung wäre, die Konferenzdaten bereits während der Service-Worker-Installation zu speichern oder nach der Aktivierung gezielt erneut anzufordern.
+Als Lösung haben wir die zweite Variante umgesetzt (Commit `b82bcd5`): Nach der Aktivierung des Service Workers fordert `main.ts` die Konferenzdaten gezielt erneut an. Das Precaching der JSON-Dateien haben wir verworfen, weil die Daten dann am Precache statt an den Cache-First-Regeln B–D hängen würden und Konzept und Umsetzung nicht mehr übereinstimmen würden. Der erneute Test in Firefox (Szenario i, Durchlauf 4) war erfolgreich: Nach genau einem Onlinebesuch waren alle drei Runtime-Caches befüllt und die Programmübersicht wurde offline vollständig aus dem Service Worker geladen.
