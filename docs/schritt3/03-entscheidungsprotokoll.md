@@ -45,7 +45,7 @@ Testumgebung: Produktions-Build (`npm run build` + `npm run preview`, http://loc
 | Betriebssystem | Windows 11 | Windows 11 |
 | Browser + Version | Google Chrome | Firefox 161.0 (64-bit) |
 | Offline-Simulation | Chrome DevTools -> Application -> Service Workers -> Offline; bei Szenario iii Network -> Offline | DevTools-Throttling „Offline" und/oder Preview-Server gestoppt |
-| Commit | `8e52005` | `9dc2344` (Durchlauf 1), `b82bcd5` (Durchlauf 4) |
+| Commit | `8e52005` | `9dc2344` (Durchlauf 1), `b82bcd5` (Szenario i Durchlauf 4, Szenario ii Durchlauf 2, Szenario iii Durchlauf 2) |
 
 ### Szenario i: Session-Übersicht offline nach vorherigem Onlinebesuch
 #### Durchlauf 1 – Person 2 (Firefox 161, Commit `9dc2344`)
@@ -91,14 +91,6 @@ Nachweis: ![Szenario i – Fehlermeldung offline](assets/szenario-1-offline-fehl
 Nachweis: ![Szenario i, Durchlauf 4 – alle Runtime-Caches nach einem Besuch](assets/szenario-1-cache-storage-1.png) ![Szenario i, Durchlauf 4 – Antworten aus dem Service Worker](assets/szenario-1-service-worker-transferred.png)
 
 ### Szenario ii: „Mein Programm" offline nach dem Hinzufügen von Sessions
-**Ausgangslage:** Online wurden drei Sessions über den Button zu „Mein Programm" hinzugefügt. In Application → Local Storage ist der Schlüssel `pixelflow:my-program:v1` mit den IDs sichtbar.
-
-**Aktion:** Offline aktivieren, `/my-program` direkt in der Adresszeile aufrufen. Anschließend offline eine Session entfernen, neu laden und prüfen, ob die Änderung erhalten bleibt.
-
-**Beobachtetes Verhalten:** TODO (Werden die gemerkten Sessions mit Titel, Zeit und Raum angezeigt? Wird die Navigation über `navigateFallback` mit `index.html` beantwortet? Bleibt die Änderung nach dem Reload erhalten?)
-
-**Ergebnis:** TODO
-
 #### Durchlauf 1 – Person 1 (Google Chrome, Windows)
 **Ausgangslage:** Zunächst habe ich die Platform online geöffnet und drei Sessions zum persönlichen Programm hinzugefügt. Die Auswahl wurde über localStorage gespeichert. Die benötigten Konferenzdaten und statischen Dateien waren bereits im Cache vorhanden.
 
@@ -108,18 +100,21 @@ Nachweis: ![Szenario i, Durchlauf 4 – alle Runtime-Caches nach einem Besuch](a
 
 **Ergebnis:** Bestanden. Die Speicherung über localStorage funktioniert auch ohne Internetverbindung. Gemeinsam mit dem App-Shell-Precaching und den Cache-First-Regeln für Konferenzdaten bleibt das persönliche Programm offline nutzbar. Eine Synchronisierung zwischen unterschiedlichen Browsern oder Geräten findet allerdings nicht statt.
 
-Nachweis: ![Szenario ii – Mein Programm offline](assets/szenario-2-my-program-offline.png) ![Szenario ii – Local Storage](assets/szenario-2-local-storage.png)
 Nachweis: ![Szenario ii – Mein Programm mit zwei Sessions im Offline-Modus](assets/szenario-2-chrome-offline.png)
 
+#### Durchlauf 2 – Person 2 (Firefox 161, Commit `b82bcd5`)
+**Ausgangslage:** Die App wurde online geöffnet und drei Sessions über den Button „+ Zu meinem Programm" gemerkt. Im Web-Speicher unter Local Storage → `http://localhost:4173` stand danach der Schlüssel `pixelflow:my-program:v1` mit dem Wert `{"version":1,"ids":["s01","s03","s02"]}`, der Zähler in der Navigation zeigte 3.
+
+**Aktion:** Im Netzwerk-Tab das Throttling auf „Offline" gestellt und `http://localhost:4173/my-program` direkt in die Adresszeile eingegeben. Anschließend offline eine Session entfernt und die Seite neu geladen.
+
+**Beobachtetes Verhalten:** „Mein Programm" wurde mit „3 Sessions gemerkt" und vollständigen Angaben (Titel, Datum, Uhrzeit, Track, Raum, Level) angezeigt. Die direkte Navigation wurde also über `navigateFallback` mit der gecachten `index.html` beantwortet. Nach dem Entfernen und dem Reload waren weiterhin die zwei verbleibenden Sessions sichtbar. Anders als bei gestopptem Server (Szenario i, Durchlauf 4) zeigte Firefox im DevTools-Offline-Modus bei allen 14 Requests leere Spalten „Status" und „Übertragen" statt „service worker". Die Fußzeile meldete „0 B / 0 B transferred", die Inhalte kamen also nicht über das Netzwerk.
+
+**Ergebnis:** Bestanden. Ergebnis deckt sich mit Durchlauf 1 in Chrome. localStorage funktioniert unabhängig vom Netz, Precache (Regel A) und die Cache-First-Regeln B–D liefern App-Shell und Sessiondaten. Die Anzeige im Netzwerk-Tab hängt in Firefox von der Offline-Methode ab und ist daher allein kein eindeutiger Nachweis.
+
+Nachweis: ![Szenario ii, Durchlauf 2 – Local Storage mit drei IDs](assets/szenario-2-local-storage.png) ![Szenario ii, Durchlauf 2 – Mein Programm offline](assets/szenario-2-my-program-offline.png)
+![Szenario ii, Durchlauf 2 – Mein Programm offline, eine Session removed](assets/szenario-2-my-program-offline-2-sessions.png)
+
 ### Szenario iii: Erstbesuch im Offline-Zustand (bewusster Grenzfall)
-**Ausgangslage:** Neues Inkognito-Fenster bzw. Site-Daten gelöscht, kein Service Worker registriert, Cache Storage leer.
-
-**Aktion:** DevTools öffnen, „Offline" aktivieren, dann `http://localhost:4173/` aufrufen.
-
-**Beobachtetes Verhalten:** TODO (Browser-Fehlerseite? Oder die Meldung aus `main.ts` „Das Programm konnte nicht geladen werden …"?)
-
-**Ergebnis und Bewertung:** TODO. Warum ist dieses Verhalten akzeptabel? (Ein Service Worker kann erst nach dem ersten Laden installiert werden, und Besucher öffnen die App typischerweise vor der Konferenz, z. B. über den Link in der Anmeldebestätigung. Was wäre eine mögliche Verbesserung?)
-
 #### Durchlauf 1 – Person 1 (Google Chrome, Windows)
 **Ausgangslage:** Für diesen Test habe ich alle bisherigen Inkognito-Fenster geschlossen. Danach habe ich ein neues Inkognito-Fenster in Google Chrome geöffnet. PixelFlow war in diesem Browser-Kontext noch nicht besucht worden. Somit waren weder ein registrierter Service Worker noch gespeicherte PWA-Dateien vorhanden.
 
@@ -130,6 +125,17 @@ Nachweis: ![Szenario ii – Mein Programm mit zwei Sessions im Offline-Modus](as
 **Ergebnis und Bewertung:** Das Verhalten entspricht der dokumentierten Einschränkung des PWA-Prototyps. Ohne vorherigen Online-Besuch kann kein Service Worker installiert werden und es stehen keine gecachten Dateien zur Verfügung. Der Offline-Erstbesuch wird deshalb nicht unterstützt. Eine mögliche Verbesserung wäre, Benutzer bereits vor der Konferenz ausdrücklich auf den notwendigen ersten Online-Aufruf hinzuweisen.
 
 Nachweis: ![Szenario iii – Erstbesuch offline](assets/szenario-3-erstbesuch-offline.png)
+
+#### Durchlauf 2 – Person 2 (Firefox 161, Commit `b82bcd5`)
+**Ausgangslage:** Über das Schloss-Symbol wurden alle Cookies und Website-Daten von `localhost:4173` gelöscht und der Service Worker in DevTools → Anwendung abgemeldet. Service Workers, Cache Storage und Local Storage waren danach leer. Für Firefox wurde bewusst kein privates Fenster verwendet, sondern derselbe, vollständig bereinigte Browser-Kontext wie in den anderen Szenarien.
+
+**Aktion:** Preview-Server mit Strg+C gestoppt, danach `http://localhost:4173/` in einem neuen Tab aufgerufen.
+
+**Beobachtetes Verhalten:** Firefox zeigte die eigene Fehlerseite „Unable to connect – Firefox can't connect to the server at localhost:4173". Im Netzwerk-Tab erschien genau ein Request (Dokument `/`) mit einem Fehler `NS_ERROR_CONN…` und 0 B Übertragung. Weitere Requests gab es nicht, auch nicht die Meldung aus `main.ts`, weil ohne Service Worker nicht einmal `index.html` verfügbar war.
+
+**Ergebnis und Bewertung:** Wie erwartet, gleiches Ergebnis wie in Chrome. Das Verhalten ist akzeptabel, weil ein Service Worker technisch erst nach dem ersten erfolgreichen Laden installiert werden kann. Keine Caching-Strategie kann diesen Fall lösen. Realistisch öffnen Besucher die App vor der Konferenz, etwa über den Link in der Anmeldebestätigung oder im Hotel-WLAN. Seit dem Fix aus Szenario i reicht dieser eine Besuch aus. Verbesserung: in der Anmeldebestätigung darauf hinweisen, die App vorab einmal zu öffnen bzw. zu installieren.
+
+Nachweis: ![Szenario iii, Durchlauf 2 – Firefox-Fehlerseite beim Erstbesuch offline](assets/szenario-3-erstbesuch-offline-firefox.png)
 
 ## Zusammenführung der Testergebnisse
 Bei Szenario i konnten wir beide unabhängig voneinander dieselbe Einschränkung feststellen. Sowohl in Google Chrome als auch in Mozilla Firefox wurde nach genau einem Online-Besuch lediglich die App-Shell offline geladen. Die Konferenzdaten standen hingegen nicht zur Verfügung, da die Runtime-Caches noch nicht befüllt waren.  
